@@ -74,7 +74,6 @@ if model_choice == "🏭 Modèle Productivité":
         no_of_style_change = st.slider("Nombre de Changements de Style", 0, 20, 2, 1, key="prod_style")
    
     with col2:
-        efficiency_ratio = st.slider("Ratio d'Efficacité", 0.0, 2.0, 1.0, 0.01, key="prod_eff")
         work_intensity = st.slider("Intensité de Travail", 0.0, 10.0, 5.0, 0.1, key="prod_intensity")
         smv_winsorized = st.slider("SMV Winsorisé", 0.0, 50.0, 25.0, 0.1, key="prod_smv_win")
         wip_winsorized = st.slider("WIP Winsorisé", 0.0, 10000.0, 5000.0, 100.0, key="prod_wip")
