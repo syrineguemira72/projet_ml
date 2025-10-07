@@ -2,8 +2,11 @@ import streamlit as st
 import joblib
 import numpy as np
 import pandas as pd
+<<<<<<< HEAD
+=======
 import math
 import pickle
+>>>>>>> 96fbf0931f414fac4e9251fb2790fdd52ddb4e66
 
 
 # Configuration de la page
@@ -21,6 +24,17 @@ def load_all_models():
         # Modèle de productivité (existant)
         model_productivite = joblib.load('models/modele_productivite.pkl')
         preprocesseurs = joblib.load('models/preprocesseurs.pkl')
+<<<<<<< HEAD
+        
+        # Nouveaux modèles
+      #  model_groupe1 = joblib.load('models/modele_groupe1.pkl')
+       # model_groupe2 = joblib.load('models/modele_groupe2.pkl')
+       # model_groupe3 = joblib.load('models/modele_groupe3.pkl')
+        
+        return {
+            'productivite': model_productivite,
+            'preprocesseurs': preprocesseurs
+=======
 
         model_workers = joblib.load('models/randomforest_no_of_workers.pkl')
 
@@ -37,6 +51,7 @@ def load_all_models():
             'preprocesseurs': preprocesseurs,
             'overtime_data': overtime_data,
             'workers': model_workers
+>>>>>>> 96fbf0931f414fac4e9251fb2790fdd52ddb4e66
         }
     except Exception as e:
         st.error(f"Erreur lors du chargement des modèles: {e}")
@@ -49,8 +64,12 @@ st.sidebar.markdown("---")
 # Sélection du modèle
 model_choice = st.sidebar.radio(
     "Choisissez le modèle à utiliser:",
+<<<<<<< HEAD
+    ["🏭 Modèle Productivité", "🧪 Modèle Groupe 2", "⚗️ Modèle Groupe 3"],
+=======
     ["🏭 Modèle Productivité", "⏱️ Analyse Heures Supplémentaires", "⚗️ Prédiction de Nombre des Workers"],
 
+>>>>>>> 96fbf0931f414fac4e9251fb2790fdd52ddb4e66
     index=0
 )
 
@@ -396,7 +415,10 @@ elif model_choice == "⏱️ Analyse Heures Supplémentaires":
                     st.write("**Statistiques descriptives complètes:**")
                     st.dataframe(overtime_data.describe(include='all'))
 
-# ============================================================================
+
+
+
+
 # PIED DE PAGE COMMUN
 
 st.markdown("---")
@@ -406,11 +428,8 @@ st.markdown("### 📊 Tableau de Bord des Modèles")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.metric("Modèle Productivité", "✅ Chargé" if models_dict.get('productivite') else "❌ Erreur")
+    st.metric("Modèle Productivité", "✅ Chargé" if models_dict['productivite'] else "❌ Erreur")
 
-with col2:
-    overtime_status = "✅ Données" if models_dict.get('overtime_data') is not None else "❌ Erreur"
-    st.metric("Données Heures Supp", overtime_status)
 
 with col3:
     st.metric("Prédiction de Nombre des Workers", "✅ Chargé" if models_dict.get('workers') else "❌ Erreur")
@@ -422,6 +441,9 @@ with st.expander("ℹ️ Guide d'Utilisation"):
     
     **🏭 Modèle Productivité** : Prédit l'efficacité de production industrielle
     - Utilise des variables comme SMV, WIP, productivité cible
+<<<<<<< HEAD
+    - Ideal pour l'optimisation manufacturière
+=======
     - Idéal pour l'optimisation manufacturière
    
     **⏱️ Analyse Heures Supplémentaires** : Explore les données sur les heures supplémentaires
@@ -433,11 +455,11 @@ with st.expander("ℹ️ Guide d'Utilisation"):
      Prédit le nombre idéal des travailleurs qui doivent se presenter dans la chaîne:
     - Utilise le nombre de changement du modéle du piéce, le temps pris par piéce et le over time.
     - Idéal pour l'optimisation de nombre des travailleurs par chaîne.
+>>>>>>> 96fbf0931f414fac4e9251fb2790fdd52ddb4e66
     
-    ### Variables Clés :
-    - **SMV (Standard Minute Value)** : Temps standard pour compléter une tâche
-    - **Over Time** : Données sur les heures supplémentaires
-    - **No of Workers** : Effectif total des travailleurs
+   
+    
+ 
     """)
 
 st.caption("Système Multi-Modèles ML • Développé avec Groupe 5")
