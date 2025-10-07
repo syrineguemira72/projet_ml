@@ -30,7 +30,7 @@ def load_all_models():
             overtime_data = pickle.load(f)
         
         # Vérification du type de données
-        st.sidebar.info(f"Type over_time: {type(overtime_data)}")
+        # st.sidebar.info(f"Type over_time: {type(overtime_data)}")
         
         return {
             'productivite': model_productivite,
@@ -49,7 +49,7 @@ st.sidebar.markdown("---")
 # Sélection du modèle
 model_choice = st.sidebar.radio(
     "Choisissez le modèle à utiliser:",
-    ["🏭 Modèle Productivité", "⏱️ Analyse Heures Supplémentaires", "🔬 Modèle Groupe 2", "⚗️ Prédiction de Nombre des Workers"],
+    ["🏭 Modèle Productivité", "⏱️ Analyse Heures Supplémentaires", "⚗️ Prédiction de Nombre des Workers"],
 
     index=0
 )
@@ -407,7 +407,7 @@ st.markdown("---")
 st.markdown("### 📊 Tableau de Bord des Modèles")
 
 # Aperçu des modèles chargés
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     st.metric("Modèle Productivité", "✅ Chargé" if models_dict.get('productivite') else "❌ Erreur")
@@ -417,10 +417,7 @@ with col2:
     st.metric("Données Heures Supp", overtime_status)
 
 with col3:
-    st.metric("Modèle Groupe 2", "🔜 Bientôt")
-
-with col4:
-    st.metric("Modèle Groupe 3", "🔜 Bientôt")
+    st.metric("Prédiction de Nombre des Workers", "✅ Chargé" if models_dict.get('workers') else "❌ Erreur")
 
 # Section d'aide
 with st.expander("ℹ️ Guide d'Utilisation"):
@@ -436,9 +433,10 @@ with st.expander("ℹ️ Guide d'Utilisation"):
     - Analyse les tendances et patterns
     - Génère des recommandations basées sur l'analyse
    
-    **🔬 Modèle Groupe 2** : [À venir]
-   
-    **🧪 Modèle Groupe 3** : [À venir]
+    **⚗️ Prédiction de Nombre des Workers** : 
+     Prédit le nombre idéal des travailleurs qui doivent se presenter dans la chaîne:
+    - Utilise le nombre de changement du modéle du piéce, le temps pris par piéce et le over time.
+    - Idéal pour l'optimisation de nombre des travailleurs par chaîne.
     
     ### Variables Clés :
     - **SMV (Standard Minute Value)** : Temps standard pour compléter une tâche
