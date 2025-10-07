@@ -2,7 +2,9 @@ import streamlit as st
 import joblib
 import numpy as np
 import pandas as pd
+import math
 import pickle
+
 
 # Configuration de la page
 st.set_page_config(
@@ -19,6 +21,9 @@ def load_all_models():
         # Modèle de productivité (existant)
         model_productivite = joblib.load('models/modele_productivite.pkl')
         preprocesseurs = joblib.load('models/preprocesseurs.pkl')
+
+        model_workers = joblib.load('models/randomforest_no_of_workers.pkl')
+
        
         # Chargement du fichier over_time.pkl
         with open('models/over_time.pkl', 'rb') as f:
@@ -30,7 +35,8 @@ def load_all_models():
         return {
             'productivite': model_productivite,
             'preprocesseurs': preprocesseurs,
-            'overtime_data': overtime_data
+            'overtime_data': overtime_data,
+            'workers': model_workers
         }
     except Exception as e:
         st.error(f"Erreur lors du chargement des modèles: {e}")
@@ -43,7 +49,8 @@ st.sidebar.markdown("---")
 # Sélection du modèle
 model_choice = st.sidebar.radio(
     "Choisissez le modèle à utiliser:",
-    ["🏭 Modèle Productivité", "⏱️ Analyse Heures Supplémentaires", "🔬 Modèle Groupe 2", "🧪 Modèle Groupe 3"],
+    ["🏭 Modèle Productivité", "⏱️ Analyse Heures Supplémentaires", "🔬 Modèle Groupe 2", "⚗️ Prédiction de Nombre des Workers"],
+
     index=0
 )
 
@@ -117,6 +124,71 @@ if model_choice == "🏭 Modèle Productivité":
                     progress_value = max(0.0, min(1.0, prediction[0]))
                     st.progress(progress_value)
                     st.caption(f"Niveau de productivité: {progress_value*100:.1f}%")
+
+            except Exception as e:
+                st.error(f"Erreur lors de la prédiction: {e}")
+
+
+
+
+# ============================================================================
+# INTERFACE 3: MODÈLE NOMBRE DES WORKERS
+# ============================================================================
+elif model_choice == "⚗️ Prédiction de Nombre des Workers":
+    st.title("⚗️ Modèle de Prédiction du Nombre des Workers")
+    st.markdown("---")
+
+    st.sidebar.header("📊 Paramètres de Production")
+
+    # 3 features du modèle RandomForest
+    SMV_MIN, SMV_MAX = 0.0, 52.94  # ou Q1=3.94, Q3=23.54 selon ce que tu veux
+    OVERTIME_MIN, OVERTIME_MAX = 0.0, 6900.0
+    STYLE_VALUES = [0, 1, 2]
+
+    # ---- Dans l’interface ----
+    col1, col2 = st.columns(2)
+
+    with col1:
+        smv = st.slider(
+            "SMV (Standard Minute Value)",
+            min_value=SMV_MIN,
+            max_value=SMV_MAX,
+            value=15.26,  # valeur par défaut (médiane)
+            step=0.1
+        )
+
+        over_time = st.slider(
+            "Over Time",
+            min_value=OVERTIME_MIN,
+            max_value=OVERTIME_MAX,
+            value=3960.0,  # valeur par défaut (médiane)
+            step=10.0
+        )
+
+    with col2:
+        no_of_style_change = st.selectbox(
+            "Nombre de Changements de Style",
+            STYLE_VALUES,
+            index=0
+        )
+
+    # Bouton de prédiction
+    if st.button("🎲 Prédire le Nombre des Workers", type="primary"):
+        input_df = pd.DataFrame([{
+            'smv': smv,
+            'over_time': over_time,
+            'no_of_style_change': no_of_style_change
+        }])
+
+        with st.spinner("Calcul de la prédiction..."):
+            try:
+                prediction = models_dict['workers'].predict(input_df)
+                st.success("✅ Prédiction terminée !")
+
+                st.metric(
+                    "Nombre de Workers Prédit",
+                    f"{math.ceil(float(prediction[0]))} ouvriers"
+                )
 
             except Exception as e:
                 st.error(f"Erreur lors de la prédiction: {e}")
