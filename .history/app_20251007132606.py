@@ -204,11 +204,31 @@ elif model_choice == "⏱️ Analyse Heures Supplémentaires":
    
    
    
-   
+    
+    # Section d'exploration des données
+    st.subheader("🔍 Exploration des Données")
+    
+    if isinstance(overtime_data, pd.DataFrame):
+        # Affichage des premières lignes
+        with st.expander("📋 Aperçu des données (5 premières lignes)"):
+            st.dataframe(overtime_data.head())
+        
+        # Informations sur les colonnes
+        with st.expander("📊 Informations sur les colonnes"):
+            st.write("**Colonnes disponibles:**")
+            for col in overtime_data.columns:
+                st.write(f"- {col}: {overtime_data[col].dtype}")
+                
+            st.write("**Statistiques descriptives:**")
+            st.dataframe(overtime_data.describe())
+    
+    # Interface d'analyse interactive
+    st.subheader("📈 Analyse Interactive")
     
     col1, col2 = st.columns(2)
     
     with col1:
+        st.subheader("📊 Variables de Production")
         smv = st.slider(
             "SMV (Standard Minute Value)", 
             min_value=0.0, 
@@ -227,8 +247,27 @@ elif model_choice == "⏱️ Analyse Heures Supplémentaires":
             help="Effectif total des travailleurs"
         )
     
-   
-      
+    with col2:
+        st.subheader("🎯 Paramètres Additionnels")
+        
+        targeted_productivity = st.slider(
+            "Productivité Cible", 
+            min_value=0.0, 
+            max_value=1.0, 
+            value=0.8, 
+            step=0.01,
+            help="Niveau de productivité visé"
+        )
+        
+        work_intensity = st.slider(
+            "Intensité de Travail", 
+            min_value=0.0, 
+            max_value=10.0, 
+            value=5.0, 
+            step=0.1,
+            help="Niveau d'intensité du travail"
+        )
+    
     # Bouton d'analyse
     if st.button("📊 Analyser les Tendances", type="primary", key="analyze_btn"):
         try:

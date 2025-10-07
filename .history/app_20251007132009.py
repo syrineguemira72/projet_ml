@@ -66,6 +66,7 @@ if model_choice == "🏭 Modèle Productivité":
     st.title("🏭 Modèle de Prédiction de Productivité")
     st.markdown("---")
     
+    st.sidebar.header("📊 Paramètres de Production")
     
     col1, col2 = st.columns(2)
     
@@ -133,6 +134,7 @@ elif model_choice == "⚗️ Prédiction de Nombre des Workers":
     st.title("⚗️ Modèle de Prédiction du Nombre des Workers")
     st.markdown("---")
 
+    st.sidebar.header("📊 Paramètres de Production")
 
     # 3 features du modèle RandomForest
     SMV_MIN, SMV_MAX = 0.0, 52.94  # ou Q1=3.94, Q3=23.54 selon ce que tu veux
@@ -197,18 +199,53 @@ elif model_choice == "⏱️ Analyse Heures Supplémentaires":
     # Affichage des informations sur les données over_time
     overtime_data = models_dict['overtime_data']
     
-   
+    st.sidebar.header("📊 Informations sur les Données")
+    
     # Affichage des métadonnées
     col1, col2, col3 = st.columns(3)
     
-   
-   
-   
-   
+    with col1:
+        if hasattr(overtime_data, 'shape'):
+            st.metric("Nombre d'observations", overtime_data.shape[0])
+        else:
+            st.metric("Type d'objet", type(overtime_data).__name__)
+    
+    with col2:
+        if hasattr(overtime_data, 'shape'):
+            st.metric("Nombre de variables", overtime_data.shape[1])
+        else:
+            st.metric("Est un DataFrame", isinstance(overtime_data, pd.DataFrame))
+    
+    with col3:
+        if hasattr(overtime_data, 'columns'):
+            st.metric("Colonnes disponibles", len(overtime_data.columns))
+        else:
+            st.metric("Données disponibles", "Oui")
+    
+    # Section d'exploration des données
+    st.subheader("🔍 Exploration des Données")
+    
+    if isinstance(overtime_data, pd.DataFrame):
+        # Affichage des premières lignes
+        with st.expander("📋 Aperçu des données (5 premières lignes)"):
+            st.dataframe(overtime_data.head())
+        
+        # Informations sur les colonnes
+        with st.expander("📊 Informations sur les colonnes"):
+            st.write("**Colonnes disponibles:**")
+            for col in overtime_data.columns:
+                st.write(f"- {col}: {overtime_data[col].dtype}")
+                
+            st.write("**Statistiques descriptives:**")
+            st.dataframe(overtime_data.describe())
+    
+    # Interface d'analyse interactive
+    st.subheader("📈 Analyse Interactive")
     
     col1, col2 = st.columns(2)
     
     with col1:
+        st.subheader("📊 Variables de Production")
         smv = st.slider(
             "SMV (Standard Minute Value)", 
             min_value=0.0, 
@@ -227,8 +264,27 @@ elif model_choice == "⏱️ Analyse Heures Supplémentaires":
             help="Effectif total des travailleurs"
         )
     
-   
-      
+    with col2:
+        st.subheader("🎯 Paramètres Additionnels")
+        
+        targeted_productivity = st.slider(
+            "Productivité Cible", 
+            min_value=0.0, 
+            max_value=1.0, 
+            value=0.8, 
+            step=0.01,
+            help="Niveau de productivité visé"
+        )
+        
+        work_intensity = st.slider(
+            "Intensité de Travail", 
+            min_value=0.0, 
+            max_value=10.0, 
+            value=5.0, 
+            step=0.1,
+            help="Niveau d'intensité du travail"
+        )
+    
     # Bouton d'analyse
     if st.button("📊 Analyser les Tendances", type="primary", key="analyze_btn"):
         try:
@@ -340,8 +396,24 @@ elif model_choice == "⏱️ Analyse Heures Supplémentaires":
                     st.write("**Statistiques descriptives complètes:**")
                     st.dataframe(overtime_data.describe(include='all'))
 
+# ============================================================================
+# PIED DE PAGE COMMUN
 
+st.markdown("---")
+st.markdown("### 📊 Tableau de Bord des Modèles")
 
+# Aperçu des modèles chargés
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric("Modèle Productivité", "✅ Chargé" if models_dict.get('productivite') else "❌ Erreur")
+
+with col2:
+    overtime_status = "✅ Données" if models_dict.get('overtime_data') is not None else "❌ Erreur"
+    st.metric("Données Heures Supp", overtime_status)
+
+with col3:
+    st.metric("Prédiction de Nombre des Workers", "✅ Chargé" if models_dict.get('workers') else "❌ Erreur")
 
 # Section d'aide
 with st.expander("ℹ️ Guide d'Utilisation"):
@@ -368,4 +440,4 @@ with st.expander("ℹ️ Guide d'Utilisation"):
     - **No of Workers** : Effectif total des travailleurs
     """)
 
-st.caption("Système Multi-Modèles ML • Développé avec Groupe 6")
+st.caption("Système Multi-Modèles ML • Développé avec Groupe 5")

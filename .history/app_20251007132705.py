@@ -209,6 +209,7 @@ elif model_choice == "⏱️ Analyse Heures Supplémentaires":
     col1, col2 = st.columns(2)
     
     with col1:
+        st.subheader("📊 Variables de Production")
         smv = st.slider(
             "SMV (Standard Minute Value)", 
             min_value=0.0, 
@@ -227,8 +228,27 @@ elif model_choice == "⏱️ Analyse Heures Supplémentaires":
             help="Effectif total des travailleurs"
         )
     
-   
-      
+    with col2:
+        st.subheader("🎯 Paramètres Additionnels")
+        
+        targeted_productivity = st.slider(
+            "Productivité Cible", 
+            min_value=0.0, 
+            max_value=1.0, 
+            value=0.8, 
+            step=0.01,
+            help="Niveau de productivité visé"
+        )
+        
+        work_intensity = st.slider(
+            "Intensité de Travail", 
+            min_value=0.0, 
+            max_value=10.0, 
+            value=5.0, 
+            step=0.1,
+            help="Niveau d'intensité du travail"
+        )
+    
     # Bouton d'analyse
     if st.button("📊 Analyser les Tendances", type="primary", key="analyze_btn"):
         try:
